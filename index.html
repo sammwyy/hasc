@@ -1,50 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HasC Example</title>
-    <!-- Import HasC Styles -->
-    <link rel="stylesheet" href="hasc.css" />
-    <!-- Import HasC Interpreter -->
-    <script src="hasc.js"></script>
-  </head>
-  <body>
-    <!-- START: Code in HasC -->
-    <div evalWith="hasc">
-      <var:string name>Sammwy</var:string>
-      <var:number age> 19 </var:number>
 
-      <if $="age > 17">
-        <then>
-          <render>
-            <h1>Eres mayor!</h1>
-          </render>
-        </then>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HasC Example</title>
+  <!-- Import HasC Styles -->
+  <link rel="stylesheet" href="hasc.css" />
+  <!-- Import HasC Interpreter -->
+  <script src="hasc.js"></script>
+</head>
 
-        <else>
-          <render>
-            <h1>Eres menor!</h1>
-          </render>
-        </else>
-      </if>
+<body>
+  <!-- START: Code in HasC -->
+  <div evalWith="hasc">
+    <var:string name>Sammwy</var:string>
+    <var:number age> 19 </var:number>
 
-      <render>
-        <p>
-          Hola <value name></value name>, tu edad es de <value age></value age>
-        </p>
-      </render>
+    <if $="age > 17">
+      <then>
+        <h1>Eres mayor!</h1>
+      </then>
 
-      <function mostrarMensaje>
-        <render>
-          <hr />
-          <p>He convertido HTML en un lenguaje de programación.</p>
-        </render>
-      </function>
+      <else>
+        <h1>Eres menor!</h1>
+      </else>
+    </if>
 
-      <call mostrarMensaje></call>
-      <call mostrarMensaje></call>
-    </div>
-  </body>
+    <p>
+      Hola <value name></value name>, tu edad es de <value age></value age>
+    </p>
+
+    <function mostrarMensaje>
+      <hr />
+      <p>He convertido HTML en un lenguaje de programación.</p>
+    </function>
+
+    <call mostrarMensaje></call>
+    <call mostrarMensaje></call>
+  </div>
+</body>
+
 </html>
