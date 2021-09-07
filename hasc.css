@@ -1,0 +1,9 @@
+var\:number,
+var\:string,
+var\:boolean {
+  display: none;
+}
+
+render {
+  display: none;
+}
