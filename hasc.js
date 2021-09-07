@@ -71,10 +71,6 @@ function evalVariable(element) {
   contextTree.addVariable(type, key.name, value);
 }
 
-function evalRender(element) {
-  element.style.display = "inherit";
-}
-
 function evalValue(element) {
   const key = element.attributes[0].name;
   const value = contextTree.getVariable(key);
@@ -144,8 +140,6 @@ function evalElement(element) {
 
   if (tagName.startsWith("var:")) {
     evalVariable(element);
-  } else if (tagName == "render") {
-    evalRender(element);
   } else if (tagName == "value") {
     evalValue(element);
   } else if (tagName == "if") {
