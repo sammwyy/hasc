@@ -46,6 +46,7 @@ We can run code under specific conditions using the IF element and passing the c
     <!-- Code if false -->
   </else>
 </if>
+```
 
 ### Render
 
