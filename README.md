@@ -48,16 +48,6 @@ We can run code under specific conditions using the IF element and passing the c
 </if>
 ```
 
-### Render
-
-The code that runs in Functions and IF will not be shown in the DOM so there is a <render> tag which will show what is inside the DOM. This can be used in IF or Functions.
-
-```html
-<render>
-  <h1>Hello World</h1>
-</render>
-```
-
 ### Functions
 
 Functions allow you to create pieces of code inside and reuse it every time we call them.
