@@ -1,11 +1,11 @@
-/* START: Context Tree */
+/* START: Context Tree ******************************************************************/
+
 const contextTree = {
   _variables: new Map(),
-
   isVariableDeclared: Function,
   addVariable: Function,
   getVariable: Function,
-  assignVariable: Function,
+  assignVariable: Function
 };
 
 contextTree.isVariableDeclared = (key) => {
@@ -17,25 +17,29 @@ contextTree.addVariable = (type, key, value) => {
     throw new Error("Variable " + key + " is already declared.");
   }
 
+  // Format values before saving
   switch (type) {
     case "number":
       value = parseInt(value);
       break;
+
     case "boolean":
       value = new Boolean(value);
       break;
+
     case "string":
+      value = `"${value}"`;
+      break;
+
     case "function":
       value = value;
       break;
+
     default:
       throw new Error("Type " + type + " isn't defined.");
   }
 
-  contextTree._variables.set(key, {
-    type,
-    value,
-  });
+  contextTree._variables.set(key, value);
 };
 
 contextTree.getVariable = (key) => {
@@ -43,7 +47,7 @@ contextTree.getVariable = (key) => {
     throw new Error("Variable " + key + " isn't defined.");
   }
 
-  return contextTree._variables.get(key).value;
+  return contextTree._variables.get(key);
 };
 
 contextTree.assignVariable = (type, key, value) => {
@@ -52,23 +56,20 @@ contextTree.assignVariable = (type, key, value) => {
   contextTree.addVariable(type, key, value);
 };
 
-/* END: Context Tree */
+/* START: Evaluation ********************************************************************/
 
-/* START: Evaluation */
 window.addEventListener("load", () => {
   const rootElements = document.querySelectorAll("[evalWith=hasc]");
 
-  for (let rootEl of rootElements) {
-    evalElement(rootEl);
-  }
+  for (let rootEl of rootElements) evalElement(rootEl);
 });
 
 function evalVariable(element) {
   const type = element.tagName.toLowerCase().split(":")[1];
-  const key = element.attributes[0];
+  const key = element.attributes[0].name;
   const value = element.innerText;
 
-  contextTree.addVariable(type, key.name, value);
+  contextTree.addVariable(type, key, value);
 }
 
 function evalValue(element) {
@@ -83,14 +84,10 @@ function evalExpression(expression) {
 
 function evalIf(element) {
   let condition = element.getAttribute("$");
-  for (let variable of contextTree._variables.entries()) {
-    const [key, varObject] = variable;
-    const regex = new RegExp(key, "g");
 
-    const value =
-      varObject.type === "string"
-        ? '"' + varObject.value + '"'
-        : varObject.value;
+  for (let variable of contextTree._variables.entries()) {
+    const [key, value] = variable;
+    const regex = new RegExp(key, "g");
 
     condition = condition.replace(regex, value);
   }
@@ -101,21 +98,12 @@ function evalIf(element) {
 
 function evalThen(element) {
   const parent = element.parentNode;
-
-  if (parent.getAttribute("isTrue") == "true") {
-    element.style.display = "inherit";
-  } else {
-    element.style.display = "none";
-  }
+  element.style.display = parent.getAttribute("isTrue") == "true" ? "inherit" : "none";
 }
 
 function evalElse(element) {
   const parent = element.parentNode;
-  if (parent.getAttribute("isTrue") == "false") {
-    element.style.display = "inherit";
-  } else {
-    element.style.display = "none";
-  }
+  element.style.display = parent.getAttribute("isTrue") == "false" ? "inherit" : "none";
 }
 
 function evalFunction(element) {
@@ -132,31 +120,26 @@ function evalCall(element) {
 }
 
 function evalElement(element) {
-  if (element.tagName == null) {
-    return;
-  }
+  if (element.tagName == null) return;
 
-  const tagName = element.tagName.toLowerCase();
+  let tagName = element.tagName.toLowerCase();
+  tagName = tagName.startsWith("var:") ? "var" : tagName;
 
-  if (tagName.startsWith("var:")) {
-    evalVariable(element);
-  } else if (tagName == "value") {
-    evalValue(element);
-  } else if (tagName == "if") {
-    evalIf(element);
-  } else if (tagName == "then") {
-    evalThen(element);
-  } else if (tagName == "else") {
-    evalElse(element);
-  } else if (tagName == "function") {
-    evalFunction(element);
-    return;
-  } else if (tagName == "call") {
-    evalCall(element);
-  }
-  const children = element.childNodes;
-  for (let child of children) {
-    evalElement(child);
-  }
+  // Associate tagname with their respective evaluation functions
+  const _evalElement = (tagName) => {
+    return {
+      var: evalVariable,
+      value: evalValue,
+      if: evalIf,
+      then: evalThen,
+      else: evalElse,
+      function: evalFunction,
+      call: evalCall
+    }[tagName];
+  };
+
+  const func = _evalElement(tagName);
+  if (func) func(element);
+
+  for (let child of element.childNodes) evalElement(child);
 }
-/* END: Evaluation */
